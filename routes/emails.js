@@ -1,24 +1,28 @@
-//NOTE - Sends Email
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
-const nodemailer = require('nodemailer');
-require(dotenv).config();
+async function sendSummaryEmail(emails, summary) {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
+            }
+        });
 
-async function sendSummaryEmail(emails,summary) {
-    const transporter = nodemailer.createTransport({
-        service:"gmail",
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_PASS
-        }
-    })
-    await transporter.sendMail({
-        from: process.env.GMAIL_USER,
-        to: emails.joins(','),
-        subject: 'Meaning Summary',
-        text: summary
-    });
+        const mailOptions = {
+            from: process.env.GMAIL_USER,
+            to: emails.join(','), // Corrected `.join`
+            subject: "Meeting Summary",
+            text: summary
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully:", info.response);
+    } catch (error) {
+        console.error("Error sending email:", error);
+    }
 }
 
-console.log("Email sent!")
-
-module.exports = {sendSummaryEmail};
+module.exports = { sendSummaryEmail };
