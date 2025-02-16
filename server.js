@@ -1,38 +1,26 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
-const cors = require("cors");
-// Import Routes
-const googleAPIRoutes = require("./routes/googleAPI");
-const uploadRoutes = require("./routes/upload");
-const processRoutes = require("./routes/process");
-const emailRoutes = require("./routes/emails");
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+const connectDB = require('./config/database');
 
-
-dotenv.config();
+const meetingsRoute = require('./routes/meetings');
 
 const app = express();
+const port = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors()); // Enable CORS
-app.use(bodyParser.json()); // Parse JSON body
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+connectDB();
 
+//Middleware
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with frontend origin
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true // for cookies (optional)
+}));
+app.use(express.json());
 
-// Use Routes
-app.use("/api/meetings", googleAPIRoutes);
-app.use("/api/upload", uploadRoutes);
-app.use("/api/process", processRoutes);
+//Routes
+app.use('/api/meetings', meetingsRoute);
 
-
-
-// Root route
-app.get("/", (req, res) => {
-  res.send("Meeting Summarizer Backend is Running 🚀");
-});
-
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`);
 });
