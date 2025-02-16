@@ -18,6 +18,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to summaree'); 
+});
+
 //Routes
 app.use('/api/meetings', meetingsRoute);
 
