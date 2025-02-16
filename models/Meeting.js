@@ -7,7 +7,7 @@ const MeetingSchema = new mongoose.Schema({
   },
   userEmail: {
     type: String,
-    required: true,  // Still required, but populated from authentication
+    required: true, 
   },
   meetingName: {
       type:String,
@@ -30,7 +30,7 @@ const MeetingSchema = new mongoose.Schema({
     default: Date.now,
   },
   conferenceRecord: {
-      type: String, // Store the conference record ID from Google Meet API
+      type: String, 
   }
 });
 
