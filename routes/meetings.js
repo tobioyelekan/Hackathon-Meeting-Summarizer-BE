@@ -3,7 +3,7 @@ const router = express.Router();
 const { google } = require('googleapis');
 const Meeting = require('../models/Meeting');
 const { sendEmail } = require('../utils/emailService');
-const summarizeText = require('../utils/summarizeText'); 
+const summarizeText = require('../utils/summarize'); 
 require('dotenv').config();
 
 const oauth2Client = new google.auth.OAuth2(
