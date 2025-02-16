@@ -12,7 +12,7 @@ connectDB();
 
 //Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with frontend origin
+  origin: 'https://summaree.vercel.app', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true // for cookies (optional)
 }));
