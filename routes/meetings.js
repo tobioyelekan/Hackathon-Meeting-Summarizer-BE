@@ -3,6 +3,7 @@ const router = express.Router();
 const { google } = require('googleapis');
 const Meeting = require('../models/Meeting');
 const {sendEmail} = require('../utils/emailService');
+const { summarizeText } = require('../utils/summarise');
 require('dotenv').config();
 
 const oauth2Client = new google.auth.OAuth2(
@@ -78,6 +79,26 @@ router.post('/process/:id', async (req, res) => {
         //Simulate processing time
         await new Promise(resolve => setTimeout(resolve, 5000));
 
+        // Fetch transcript content
+        let transcriptText = '';
+        try {
+            const response = await axios.get(meeting.transcriptUrl);
+            transcriptText = response.data;
+        } catch (fetchError) {
+            console.error('Error fetching transcript:', fetchError);
+            return res.status(500).json({ message: 'Failed to retrieve transcript' });
+        }
+
+
+        // Summarize the transcript
+        let summary = '';
+        try {
+            summary = await summarizeText(transcriptText);
+        } catch (summarizationError) {
+            console.error('Error summarizing transcript:', summarizationError);
+            return res.status(500).json({ message: 'Failed to summarize transcript' });
+        }
+
         //Update meeting status and results.
         meeting.status = 'completed';
         meeting.recordingUrl = 'http://example.com/recording.mp4'; //recording url
@@ -88,18 +109,18 @@ router.post('/process/:id', async (req, res) => {
         await sendEmail(
             meeting.userEmail,
             'Summaree - Your Meeting Summary is Ready',
-            `<p>Hello, your meeting summary is ready!</p>
+             `<p>Hello, your meeting summary is ready!</p>
+             <p><strong>Summary:</strong> ${summary}</p>
              <p>Recording: <a href="${meeting.recordingUrl}">${meeting.recordingUrl}</a></p>
              <p>Transcript: <a href="${meeting.transcriptUrl}">${meeting.transcriptUrl}</a></p>`
         );
 
-        res.status(200).json({ message: 'Meeting processed and email sent!' });
+        res.status(200).json({ message: 'Meeting processed, summary generated, and email sent!' });
 
     } catch (error) {
         console.error('Error processing meeting:', error);
         res.status(500).json({ message: 'Failed to process meeting' });
     }
 });
-
 
 module.exports = router;
