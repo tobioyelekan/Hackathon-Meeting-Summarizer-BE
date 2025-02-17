@@ -12,10 +12,17 @@ connectDB();
 // Middleware
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 app.use(cors(*));
 =======
 app.use(cors());
 >>>>>>> ad3624d (restructured backend)
+=======
+app.use(cors());
+=======
+app.use(cors(*));
+>>>>>>> af802925efd0cc93033df0ba451fdd1d2ff7a025
+>>>>>>> 780dbca (new commit)
 app.use(express.json());
 
 app.get('/', (req, res) => {
